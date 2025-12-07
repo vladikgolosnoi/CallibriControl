@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Презентация Callibri Control</title>
+  <style>
+    body { margin: 0; font-family: "Space Grotesk", system-ui, -apple-system, sans-serif; background:#0e162a; color:#e8ecf8; display:flex; flex-direction:column; height:100vh; }
+    header { padding:14px 18px; display:flex; justify-content:space-between; align-items:center; background:#121c34; border-bottom:1px solid rgba(255,255,255,0.06); }
+    button { padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); background:linear-gradient(120deg,#5dd7ff,#7b6bff); color:#0a1022; font-weight:700; cursor:pointer; }
+    #frame { flex:1; border:0; width:100%; }
+    .hint { padding:16px 18px; color:#a0acc4; }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>Callibri Control</strong> · Презентация</div>
+    <button onclick="window.location.href='/'">Вернуться на дашборд</button>
+  </header>
+  <iframe id="frame" src="presentation.pdf"></iframe>
+  <div class="hint">Если PDF не отображается, поместите файл <code>presentation.pdf</code> в папку <code>web/</code> этого проекта и обновите страницу.</div>
+</body>
+</html>

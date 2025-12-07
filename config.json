@@ -1,0 +1,30 @@
+{
+  "general": {
+    "autoconnect": true,
+    "scan_timeout": 5,
+    "reconnect": true,
+    "reconnect_interval": 3,
+    "log_level": "INFO",
+    "demo_mode": false,
+    "language": "ru"
+  },
+  "sensor": {
+    "emg_sampling_rate": 500,
+    "notch_frequency": 50
+  },
+  "control": {
+    "profile": "DEFAULT"
+  },
+  "ui": {
+    "theme": "dark"
+  },
+  "recognition": {
+    "sensitivity_profile": "NORMAL",
+    "debounce_ms": 250,
+    "min_confidence": 0.6
+  },
+  "paths": {
+    "logs": "logs",
+    "sessions": "sessions"
+  }
+}

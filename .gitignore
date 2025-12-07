@@ -1,0 +1,18 @@
+# Virtualenvs and Python caches
+.venv/
+.venv_x86/
+__pycache__/
+*.pyc
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs and generated files
+logs/
+
+# Do not upload the large prompt/instructions file
+FINAL_MEGA_PROMPT.md

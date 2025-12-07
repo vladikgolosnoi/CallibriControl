@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Callibri Control — Web Experience</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+    :root {
+      --bg: radial-gradient(130% 120% at 20% 20%, #0f1b35, #0c1326 42%, #0a1020 80%);
+      --panel: rgba(14, 22, 42, 0.78);
+      --panel-strong: rgba(18, 28, 52, 0.9);
+      --border: rgba(255, 255, 255, 0.06);
+      --text: #e8ecf8;
+      --muted: #a0acc4;
+      --accent: #5dd7ff;
+      --accent-2: #7b6bff;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #ef4444;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+    body[data-theme="light"] {
+      --bg: radial-gradient(120% 120% at 18% 12%, #e5f1ff, #dfe7ff 30%, #cfd8ff 60%, #d6e0ff 100%);
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-strong: rgba(255, 255, 255, 0.95);
+      --border: rgba(15, 23, 42, 0.08);
+      --text: #0f172a;
+      --muted: #52607c;
+      --shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 22px;
+      min-height: 100vh;
+      font-family: "Space Grotesk", "Inter", "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: var(--panel-strong);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      font-size: 18px;
+    }
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      font-family: inherit;
+    }
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s ease, background .2s ease, border .2s ease, opacity .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.12); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn.primary { background: linear-gradient(120deg, var(--accent), var(--accent-2)); border-color: transparent; color: #0a1022; }
+    .shell {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .section-title { margin: 0 0 10px; font-weight: 700; font-size: 16px; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .status {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 72px;
+    }
+    .status .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; }
+    .status .value { font-weight: 700; font-size: 17px; }
+    .hero {
+      position: relative;
+      min-height: 360px;
+      border-radius: 16px;
+      background: radial-gradient(ellipse at 20% 20%, rgba(93,215,255,0.12), transparent 40%), radial-gradient(ellipse at 80% 10%, rgba(123,107,255,0.14), transparent 36%), rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .gesture-circle {
+      position: absolute;
+      inset: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      box-shadow: 0 0 50px rgba(93,215,255,0.22);
+    }
+    .confidence {
+      position: absolute;
+      bottom: 18px;
+      width: 100%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .bars {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .bar-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .bar-label { color: var(--muted); font-size: 13px; }
+    .bar {
+      position: relative;
+      height: 12px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .bar-fill {
+      position: absolute;
+      inset: 0;
+      width: 40%;
+      background: linear-gradient(90deg, var(--accent-2), var(--warn), var(--danger));
+      transition: width .2s ease;
+    }
+    .spark {
+      position: relative;
+      height: 140px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .spark svg { position: absolute; inset: 6px 10px; }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 12px;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: default;
+    }
+    .pill.action { cursor: pointer; transition: transform .15s ease, opacity .15s ease; }
+    .pill.action:hover { transform: translateY(-1px); opacity: 0.9; }
+    @media (max-width: 1100px) {
+      .shell { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span style="display:inline-block;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 6px 16px rgba(93,215,255,0.28);"></span>
+      CALLIBRI CONTROL · WEB
+    </div>
+    <div class="actions">
+      <span class="tag">Product-grade • Web Demo</span>
+      <button class="btn" id="themeToggle">Тема</button>
+      <button class="btn primary" id="startBtn">Подключиться</button>
+      <button class="btn" id="cursorBtn">Курсор</button>
+      <button class="btn" id="demoBtn">Демо</button>
+      <button class="btn" id="presentationBtn">Презентация</button>
+      <button class="btn" id="hudBtn">HUD</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="card">
+      <h3 class="section-title">Система</h3>
+      <div class="status-grid">
+        <div class="status">
+          <span class="label">Устройство</span>
+          <span class="value" id="devName">Callibri — не подключено</span>
+        </div>
+        <div class="status">
+          <span class="label">Состояние</span>
+          <span class="value" id="state">Готов</span>
+        </div>
+        <div class="status">
+          <span class="label">Версия</span>
+          <span class="value" id="fw">—</span>
+        </div>
+        <div class="status">
+          <span class="label">Батарея</span>
+          <span class="value" id="battery">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="section-title">Жесты & Профили</h3>
+      <div class="pill-row" id="gestureList"></div>
+      <div class="pill-row" id="metaPills" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="hero card">
+      <div class="gesture-circle" id="gesture">TILT_UP</div>
+      <div class="confidence" id="confidence">Уверенность: 31%</div>
+      <div class="spark">
+        <svg id="emgLine"></svg>
+      </div>
+      <div class="pill" id="liveStatus" style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.25);border:1px solid var(--border);">Статус: —</div>
+      <canvas id="cursorCanvas" style="position:absolute;inset:0;pointer-events:none;"></canvas>
+    </div>
+    <div class="card">
+      <h3 class="section-title">Показатели</h3>
+      <div class="bars">
+        <div class="bar-wrap">
+          <div class="bar-label">Сила мышцы</div>
+          <div class="bar"><div class="bar-fill" id="muscleBar"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-label">Усталость</div>
+          <div class="bar"><div class="bar-fill" id="fatigueBar" style="background:linear-gradient(90deg,var(--warn),var(--danger));width:43%;"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-label">Ориентация (pitch/roll)</div>
+          <div class="mini-grid" id="orientGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">Быстрые действия</h3>
+    <div class="pill-row" id="quickActions"></div>
+  </div>
+
+  <script>
+    const ui = {
+      themeToggle: document.getElementById("themeToggle"),
+      startBtn: document.getElementById("startBtn"),
+      hudBtn: document.getElementById("hudBtn"),
+      cursorBtn: document.getElementById("cursorBtn"),
+      presentationBtn: document.getElementById("presentationBtn"),
+      demoBtn: document.getElementById("demoBtn"),
+      gestureList: document.getElementById("gestureList"),
+      metaPills: document.getElementById("metaPills"),
+      quickActions: document.getElementById("quickActions"),
+      muscleBar: document.getElementById("muscleBar"),
+      fatigueBar: document.getElementById("fatigueBar"),
+      gestureCircle: document.getElementById("gesture"),
+      confEl: document.getElementById("confidence"),
+      emgLine: document.getElementById("emgLine"),
+      devName: document.getElementById("devName"),
+      stateEl: document.getElementById("state"),
+      fwEl: document.getElementById("fw"),
+      battEl: document.getElementById("battery"),
+      orientGrid: document.getElementById("orientGrid"),
+      liveStatus: document.getElementById("liveStatus"),
+    };
+
+    const gesturePool = ["MUSCLE_FLEX", "DOUBLE_FLEX", "TRIPLE_FLEX", "TILT_UP", "TILT_DOWN", "TILT_LEFT", "TILT_RIGHT", "SHAKE"];
+    const state = { fallback: false, es: null, emgBuffer: [], lastGesture: null };
+    let fallbackHandle = null;
+    let fallbackTime = 0;
+    let lastOrientation = { pitch: 0, roll: 0 };
+    let cursorEnabled = false;
+
+    initTheme();
+    bindUI();
+    bootstrap();
+
+    async function bootstrap() {
+      updateQuickActions();
+      await startStream(false, false);
+      const ok = await fetchSnapshot();
+      connectEvents();
+      if (!ok) startFallback("Нет соединения с сервером, включена демо-визуализация.");
+    }
+
+    function bindUI() {
+      ui.themeToggle.onclick = toggleTheme;
+      ui.startBtn.onclick = () => startStream(false, true);
+      ui.demoBtn.onclick = () => startStream(true);
+      ui.cursorBtn.onclick = () => {
+        cursorEnabled = !cursorEnabled;
+        ui.cursorBtn.classList.toggle("primary", cursorEnabled);
+        drawCursor();
+      };
+      ui.presentationBtn.onclick = () => window.open("/presentation.html", "_blank");
+      ui.hudBtn.onclick = () => {
+        postJSON("/api/hud").then(() => {
+          ui.confEl.textContent = "HUD: запрос отправлен";
+        }).catch(() => {});
+      };
+    }
+
+    function toggleTheme() {
+      const current = document.body.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      document.body.setAttribute("data-theme", next);
+      localStorage.setItem("cc-theme", next);
+      ui.themeToggle.textContent = next === "light" ? "Тёмная" : "Светлая";
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem("cc-theme") || "dark";
+      document.body.setAttribute("data-theme", saved);
+      ui.themeToggle.textContent = saved === "light" ? "Тёмная" : "Светлая";
+    }
+
+    function updateQuickActions() {
+      const actions = [
+        { label: "Старт", handler: () => startStream(false, true) },
+        { label: "Калибровка", handler: calibrate },
+        { label: "Игры", handler: () => setProfile("GAMING") },
+        { label: "Тренировки", handler: () => setProfile("SENSITIVE") },
+        { label: "Профили", handler: () => setProfile("ULTRA_SENSITIVE") },
+      ];
+      ui.quickActions.innerHTML = "";
+      actions.forEach((act) => {
+        const el = document.createElement("span");
+        el.className = "pill action";
+        el.textContent = act.label;
+        el.onclick = () => act.handler();
+        ui.quickActions.appendChild(el);
+      });
+    }
+
+    async function fetchSnapshot() {
+      try {
+        const res = await fetch("/api/state", { cache: "no-store" });
+        if (!res.ok) throw new Error("bad status");
+        const data = await res.json();
+        applySnapshot(data);
+        stopFallback();
+        return true;
+      } catch (err) {
+        console.warn("state fetch failed", err);
+        return false;
+      }
+    }
+
+    function connectEvents() {
+      if (!("EventSource" in window)) {
+        startFallback("SSE не поддерживается браузером.");
+        return;
+      }
+      if (state.es) {
+        state.es.close();
+        state.es = null;
+      }
+      const es = new EventSource("/events");
+      es.onmessage = (evt) => {
+        try {
+          const payload = JSON.parse(evt.data);
+          stopFallback();
+          applySnapshot(payload);
+        } catch (err) {
+          console.warn("parse sse", err);
+        }
+      };
+      es.onerror = () => {
+        startFallback("Потеряно соединение с потоковыми данными.");
+        es.close();
+        setTimeout(connectEvents, 1200);
+      };
+      es.onopen = () => stopFallback();
+      state.es = es;
+    }
+
+    function applySnapshot(data) {
+      if (!data || typeof data !== "object") return;
+      const device = data.device || {};
+      const metrics = data.metrics || {};
+      const gesture = data.gesture || null;
+
+      const readableState = data.state === "active" ? (data.mode === "demo" ? "Демо" : "Активно") : (data.state || "Готов");
+      ui.devName.textContent = device.name || "Callibri — не подключено";
+      ui.stateEl.textContent = readableState;
+      ui.fwEl.textContent = device.firmware || "—";
+      ui.battEl.textContent = device.battery ? `${device.battery}%` : "—";
+      ui.liveStatus.textContent = `Статус: ${readableState}`;
+
+      const rawStrength = clamp(metrics.strength ?? 0, 0, 1.5);
+      const visStrength = clamp(metrics.strength_vis ?? 0, 0, 1.5);
+      const boostedStrength = clamp((metrics.emg || 0) * 600, 0, 1.5); // усиливаем визуализацию слабых сигналов
+      const strength = clamp(Math.max(rawStrength, visStrength, boostedStrength), 0, 1.5);
+      ui.muscleBar.style.width = `${Math.min(strength * 100, 100)}%`;
+      const fatigue = clamp(metrics.fatigue_index ?? 0, 0, 1);
+      ui.fatigueBar.style.width = `${Math.min(fatigue * 100, 100)}%`;
+
+      renderOrientation(metrics);
+      renderGestures(data.gesture_history || [], gesture?.type);
+
+      ui.gestureCircle.textContent = gesture?.type || "—";
+      const conf = clamp(gesture?.confidence ?? strength, 0, 1.4);
+      ui.confEl.textContent = `Уверенность: ${Math.round(conf * 100)}%`;
+
+      renderEMG(data.emg_preview || []);
+      renderMeta(data);
+    }
+
+    function renderOrientation(metrics) {
+      const pitch = Number(metrics.pitch || 0).toFixed(1);
+      const roll = Number(metrics.roll || 0).toFixed(1);
+      const yaw = Number(metrics.yaw || 0).toFixed(1);
+      lastOrientation = { pitch: Number(pitch), roll: Number(roll) };
+      drawCursor();
+      ui.orientGrid.innerHTML = `
+        <div class="status"><span class="label">Pitch</span><span class="value">${pitch}°</span></div>
+        <div class="status"><span class="label">Roll</span><span class="value">${roll}°</span></div>
+        <div class="status"><span class="label">Yaw</span><span class="value">${yaw}°</span></div>
+      `;
+    }
+
+    function drawCursor() {
+      const canvas = document.getElementById("cursorCanvas");
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      const maxDeg = 35;
+      const x = rect.width / 2 + (Math.max(Math.min(lastOrientation.roll, maxDeg), -maxDeg) / maxDeg) * (rect.width / 2 - 30);
+      const y = rect.height / 2 + (Math.max(Math.min(lastOrientation.pitch, maxDeg), -maxDeg) / maxDeg) * (rect.height / 2 - 30);
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      const grd = ctx.createLinearGradient(x - 10, y - 10, x + 10, y + 10);
+      grd.addColorStop(0, "var(--accent)");
+      grd.addColorStop(1, "var(--accent-2)");
+      ctx.fillStyle = grd;
+      ctx.shadowColor = "rgba(93,215,255,0.4)";
+      ctx.shadowBlur = 12;
+      ctx.fill();
+    }
+
+    function renderGestures(history, lastType) {
+      ui.gestureList.innerHTML = "";
+      const list = [...history];
+      if (lastType) list.push({ type: lastType, ts: Date.now() / 1000 });
+      const trimmed = list.slice(-16).reverse();
+      trimmed.forEach((item) => {
+        const el = document.createElement("span");
+        el.className = "pill";
+        el.textContent = item.type || "—";
+        ui.gestureList.appendChild(el);
+      });
+    }
+
+    function renderMeta(data) {
+      ui.metaPills.innerHTML = "";
+      const session = formatDuration(data.session_ms || 0);
+      const items = [
+        `Профиль: ${data.profile?.gesture || "—"}`,
+        `Режим: ${data.mode === "demo" ? "Демо" : "Устройство"}`,
+        data.metrics?.emg_mode ? `EMG: ${data.metrics.emg_mode}` : null,
+        data.signal_quality ? `Электроды: ${data.signal_quality}` : "Электроды: —",
+        `Курсор: ${cursorEnabled ? "вкл" : "выкл"}`,
+        session ? `Сессия: ${session}` : null,
+      ].filter(Boolean);
+      items.forEach((txt) => {
+        const el = document.createElement("span");
+        el.className = "pill";
+        el.textContent = txt;
+        ui.metaPills.appendChild(el);
+      });
+    }
+
+    function renderEMG(points) {
+      let series = points.length ? points.slice(-120) : state.emgBuffer.slice(-120);
+      if (!series.length) {
+        // синтетика, чтобы график не выглядел пустым в режиме ожидания
+        const now = performance.now() / 1000;
+        series = Array.from({ length: 80 }, (_, i) => 0.12 + 0.06 * Math.sin(now + i * 0.2));
+      }
+      state.emgBuffer = series;
+      const w = ui.emgLine.clientWidth || 320;
+      const h = 120;
+      const max = Math.max(...series, 0.1);
+      const min = Math.min(...series, 0);
+      const span = max - min || 1;
+      const d = series.map((v, i) => {
+        const x = (i / Math.max(series.length - 1, 1)) * w;
+        const y = h - ((v - min) / span) * h;
+        return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(" ");
+      ui.emgLine.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      ui.emgLine.innerHTML = `
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="var(--accent)"/>
+            <stop offset="100%" stop-color="var(--accent-2)"/>
+          </linearGradient>
+        </defs>
+        <path d="${d}" stroke="url(#grad)" stroke-width="2" fill="none"/>
+      `;
+    }
+
+    async function startStream(demoMode, forceReconnect = false) {
+      ui.stateEl.textContent = demoMode ? "Демо" : "Подключение...";
+      ui.liveStatus.textContent = `Статус: ${demoMode ? "Демо" : "Подключение..."}`;
+      if (state.es && forceReconnect) {
+        state.es.close();
+        state.es = null;
+      }
+      const ok = await postJSON("/api/start", { demo: !!demoMode });
+      if (!ok) {
+        startFallback("Не удалось запустить поток. Демо-режим включен.");
+        return;
+      }
+      if (demoMode) {
+        ui.stateEl.textContent = "Демо";
+        ui.liveStatus.textContent = "Статус: Демо";
+        startFallback("Демо включен пользователем");
+      } else {
+        stopFallback();
+        connectEvents();
+      }
+    }
+
+    async function startDemo() {
+      return startStream(true);
+    }
+
+    async function calibrate() {
+      const ok = await postJSON("/api/calibrate", {});
+      if (ok) {
+        ui.confEl.textContent = "Калибровка: запущена";
+        ui.liveStatus.textContent = "Статус: Калибровка";
+      }
+    }
+
+    async function setProfile(name) {
+      await postJSON("/api/profile", { gesture: name });
+    }
+
+    async function postJSON(url, body) {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: body ? JSON.stringify(body) : "{}",
+        });
+        return res.ok;
+      } catch (err) {
+        console.warn("postJSON", err);
+        startFallback("Нет ответа от сервера.");
+        return false;
+      }
+    }
+
+    function formatDuration(ms) {
+      if (!ms) return "—";
+      const total = Math.floor(ms / 1000);
+      const m = Math.floor(total / 60).toString().padStart(2, "0");
+      const s = (total % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    function clamp(val, min = 0, max = 1) {
+      return Math.max(min, Math.min(max, Number(val) || 0));
+    }
+
+    function startFallback(reason) {
+      if (state.fallback) return;
+      console.warn(reason || "fallback");
+      state.fallback = true;
+      fakeTick();
+    }
+
+    function stopFallback() {
+      state.fallback = false;
+      if (fallbackHandle) cancelAnimationFrame(fallbackHandle);
+      fallbackHandle = null;
+    }
+
+    function fakeTick() {
+      if (!state.fallback) return;
+      fallbackTime += 0.04;
+      const emg = 0.35 + 0.25 * Math.sin(fallbackTime * 2) + Math.random() * 0.12;
+      const fatigue = 0.2 + 0.35 * Math.abs(Math.sin(fallbackTime * 0.4));
+      if (state.emgBuffer.length > 140) state.emgBuffer.shift();
+      state.emgBuffer.push(emg);
+      const gesture = Math.random() > 0.93 ? gesturePool[Math.floor(Math.random() * gesturePool.length)] : null;
+      const payload = {
+        ts: Date.now() / 1000,
+        state: "demo",
+        mode: "demo",
+        streaming: true,
+        device: { name: "Callibri — демо", firmware: "web", battery: "100" },
+        metrics: {
+          emg,
+          strength: clamp(emg, 0, 1.25),
+          fatigue_index: clamp(fatigue, 0, 1),
+          pitch: Math.sin(fallbackTime) * 18,
+          roll: Math.cos(fallbackTime * 0.9) * 16,
+          yaw: Math.sin(fallbackTime * 0.5) * 10,
+          emg_mode: "sim",
+        },
+        gesture: gesture ? { type: gesture, confidence: 0.6 + Math.random() * 0.3 } : null,
+        gesture_history: gesture ? [{ type: gesture, ts: Date.now() / 1000 }] : [],
+        session_ms: Math.floor(fallbackTime * 1000),
+        emg_preview: state.emgBuffer.slice(-120),
+      };
+      applySnapshot(payload);
+      fallbackHandle = requestAnimationFrame(fakeTick);
+    }
+  </script>
+</body>
+</html>
