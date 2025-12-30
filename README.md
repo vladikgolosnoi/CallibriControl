@@ -77,9 +77,9 @@ pip install -r requirements.txt
   ![Callibri тыльная сторона 1](media/images/callibri-strap1.jpg)  
   ![Callibri тыльная сторона 2](media/images/callibri-strap2.jpg)
 - Видео:  
-  - [Демо листания слайдов](media/videos/demo-slides.MOV)  
-  - [Демо управления курсором](media/videos/demo-cursor.MOV)  
-  (Видео открываются прямо в GitHub; при необходимости скачайте для локального просмотра.)
+  - [Демо листания слайдов (MP4, ~11 МБ)](media/videos/demo-slides.mp4)  
+  - [Демо управления курсором (MP4, ~11 МБ)](media/videos/demo-cursor.mp4)  
+  (MP4 проигрываются прямо в GitHub; можно скачать для офлайн просмотра.)
 
 ## Конфигурация
 - `config.json` — общие настройки (логирование, автоподключение, демо, язык).

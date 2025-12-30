@@ -14,5 +14,5 @@ __pycache__/
 # Logs and generated files
 logs/
 
-# Do not upload the large prompt/instructions file
-FINAL_MEGA_PROMPT.md
+# Large binaries we keep out of git
+*.MOV
